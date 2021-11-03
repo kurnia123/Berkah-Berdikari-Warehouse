@@ -3,7 +3,7 @@ date_default_timezone_set('Asia/Jakarta');
 
 $host = "localhost" ;
 $user = "root" ;
-$pass = "" ;
+$pass = "";
 $debe = "db_toko" ;
 
 $koneksi = mysqli_connect($host,$user,$pass,$debe) ;
@@ -25,7 +25,11 @@ function getDataWeek() {
     $dataChart = array();
 
     while ($rowCD = mysqli_fetch_assoc($resChartData)) {
-        $dataChart[strval($rowCD["hari"])] = $rowCD["omset"];
+        if ($rowCD["hari"] < 10) {
+            $dataChart["0".strval($rowCD["hari"])] = $rowCD["omset"];
+        } else {
+            $dataChart[strval($rowCD["hari"])] = $rowCD["omset"];
+        }
     }
 
     $day = date('w');

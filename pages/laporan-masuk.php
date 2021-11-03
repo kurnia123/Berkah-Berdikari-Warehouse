@@ -7,11 +7,32 @@
     cek();
 
     $cari = "" ;
-    if (isset($_GET['c'])){
+    $startDate = "";
+    $endDate = date("Y-m-d");
+    $sort = "";
+    
+    // Get Query Cari
+    if (isset($_GET['c'])) {
         $cari = $_GET['c'];
     }
 
-    $sql = "SELECT * FROM produk where pronama like '%$cari%'" ;
+    // Get Query limit date
+    if (isset($_GET['startDate'], $_GET['endDate']) && $_GET['endDate'] != '') {
+        $startDate = $_GET['startDate'];
+        $endDate = $_GET['endDate'];
+    } else {
+        $endDate = date("Y-m-d");
+    }
+
+    // Get Sort
+    if (isset($_GET['sort'])) {
+        $sort = $_GET['sort'];
+    }
+
+    $sql = "SELECT * FROM produk
+            WHERE pronama LIKE '%$cari%' AND
+            protanggal BETWEEN '$startDate' AND '$endDate'
+            ORDER BY proharga $sort";
     $res = query($sql) ;
     $count = total($sql);
 ?>
@@ -84,33 +105,64 @@
                 <div class="container-fluid">
                     <h3 class="text-dark mb-4">Data Barang</h3>
                     <div class="card shadow">
-                        <div class="card-body">
+                        <form class="card-body">
                             <div class="row">
-                                <div class="col-md-9 text-nowrap">
+                                <div class="col-md-3 text-nowrap">
                                     <a class="btn btn-success" href="../utils/export-laporan-masuk-barang.php">Export Excel</a>
+                                    <a href="./laporan-masuk.php" class="btn btn-primary" title="Refresh">
+                                        <i class="fas fa-redo-alt"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-nowrap">
+                                    <div class="form-row">
+                                        <span class="align-self-center">From</span>
+                                        <div class="col-sm-5">
+                                            <input type="date" class="form-control datefield" placeholder="Date" name="startDate">
+                                        </div>
+                                        <span class="align-self-center">To</span>
+                                        <div class="col-sm-5">
+                                            <input type="date" class="form-control datefield" placeholder="To" name="endDate" value="<?= $endDate ?>">
+                                        </div>
+                                        <button class="btn btn-dark" type="submit" title="Filter"><i class="fas fa-filter"></i></button>
+                                    </div>
                                 </div>
                                 <div class="col-md-3 text-md-right">
-                                    <form>
-                                        <label class="sr-only" for="inlineFormInputGroupUsername">Cari Barang</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                            <div class="input-group-text"><i class="fas fa-box-open"></i></div>
-                                            </div>
-                                            <input type="search" id="inlineFormInputGroupUsername" class="form-control form-control-sm" value="<?= $cari?>" placeholder="Cari Barang" name="c">
+                                    <label class="sr-only" for="inlineFormInputGroupUsername">Cari Barang</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fas fa-box-open"></i></div>
                                         </div>
-                                    </form>
+                                        <input type="search" id="inlineFormInputGroupUsername" class="form-control" value="<?= $cari?>" placeholder="Cari Barang" name="c">
+                                    </div>
                                 </div>
                             </div>
                             <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
                                 <table class="table my-0" id="dataTable">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Nama Barang</th>
-                                            <th>Sisa Stok</th>
-                                            <th>Harga</th>
-                                            <th>Tanggal</th>
-                                            <th>Supplier</th>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Nama Barang</th>
+                                            <th scope="col">Sisa Stok</th>
+                                            <th scope="col">Satuan</th>
+                                            <th scope="col">
+                                            <div class="row">
+                                                    <div class="col align-self-center">
+                                                        harga
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><i class="fas fa-sort text-gray-400"></i></button>
+                                                                <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in" role="menu">
+                                                                    <p class="text-center dropdown-header">Sortt By:</p>
+                                                                    <div class="dropdown-item sort" role="presentation" sort="DESC" style="cursor: pointer;"><i class="fas fa-sort-alpha-up-alt"></i>&nbsp; Descending</div>
+                                                                    <div class="dropdown-item sort" role="presentation" sort="ASC" style="cursor: pointer;"><i class="fas fa-sort-alpha-down"></i>&nbsp; Ascending</div>
+                                                                    <input type="hidden" class="sort-input" name="sort">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </th>
+                                            <th scope="col">Tanggal</th>
+                                            <th scope="col">Supplier</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -120,9 +172,10 @@
                                         while($row = mysqli_fetch_assoc($res)){
                                             ?>
                                                 <tr>
-                                                    <td class="text-truncate"><?= $row['proid'] ?></td>
+                                                    <td><?= $row['proid'] ?></td>
                                                     <td><?= $row['pronama'] ?></td>
                                                     <td><?= $row['projumlah'] ?></td>
+                                                    <td><?= ucwords($row['prosatuan']) ?></td>
                                                     <td><?= number_format($row['proharga'],2) ?></td>
                                                     <td><?= $row['protanggal'] ?></td>
                                                     <td><?= $row['prosupplier'] ?></td>
@@ -144,13 +197,13 @@
                                     </nav>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>

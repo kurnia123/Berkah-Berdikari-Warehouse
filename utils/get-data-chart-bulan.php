@@ -3,7 +3,7 @@ date_default_timezone_set('Asia/Jakarta');
 
 $host = "localhost" ;
 $user = "root" ;
-$pass = "" ;
+$pass = "";
 $debe = "db_toko" ;
 
 $koneksi = mysqli_connect($host,$user,$pass,$debe) ;

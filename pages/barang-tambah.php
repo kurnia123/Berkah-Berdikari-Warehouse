@@ -7,6 +7,9 @@
     require '../conf/init.php' ;
     cek();
 
+    $sql_satuan_barang = 'SELECT * FROM satuan_barang';
+    $res_satuan_barang = query($sql_satuan_barang);
+
     if (isset($_POST['simpan'])){
         $id = getFaktur("PROD");
         $pronama = $_POST['pronama'] ;
@@ -14,16 +17,37 @@
         $projumlah = $_POST['projumlah'] ;
         $prosupplier = $_POST['prosupplier'] ;
         $protanggal = date("Y-m-d H:i:s") ;
+        $prosatuan = $_POST['sb'] ;
+
+        // Cek Satuan Barang
+        $sql_satuan_barang = "SELECT * FROM satuan_barang WHERE satuan=LOWER('$prosatuan')";
+
+        if (total($sql_satuan_barang) == 0) {
+            $sql_satuan_barang = "INSERT INTO satuan_barang VALUES (LOWER('$prosatuan'))";
+            query($sql_satuan_barang);
+        }
+        // End Cek Satuan Barang
 
         if (empty($pronama) || empty($proharga) || empty($projumlah)){
             $ms = 'Harap masukkan data dengan benar' ;
         } else {
-            $sql = "CALL sto_tambahProduk('$id','$pronama',$proharga,$projumlah,'$protanggal','$prosupplier');" ;
-            echo $sql;
+            $sql = "CALL sto_tambahProduk('$id','$pronama',$proharga,$projumlah,'$protanggal','$prosatuan','$prosupplier');" ;
             if (query($sql)){
-                header("Location: {$base_url}pages/barang.php");
+                echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Berhasil</strong> Barang sudah terinput';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
+
+                // header("Location: {$base_url}pages/barang.php");
             } else {
-                $ms = 'Gagal Menambah Data ! Harap masukkan data dengan benar' ;
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Gagal</strong> Terjadi kesalahan input barang';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             }
         }
     }
@@ -105,7 +129,7 @@
                                 <div class="col">
                                     <div class="card shadow mb-3">
                                         <div class="card-body">
-                                            <form method="POST">
+                                            <form method="POST" autocomplete="on">
                                                 <div class="form-row">
                                                     <div class="col">
                                                         <div class="form-group"><label for="email"><strong>Nama Produk</strong></label><input class="form-control" type="text" placeholder="Nama Produk" name="pronama" required></div>
@@ -114,6 +138,22 @@
                                                 <div class="form-row">
                                                     <div class="col">
                                                         <div class="form-group"><label for="last_name"><strong>Harga</strong><br></label><input class="form-control" type="number" placeholder="Harga" name="proharga" required></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col">
+                                                        <div class="form-group"><label for="sb"><strong>Satuan Barang</strong></label>
+                                                            <input list="sb" class="form-control" type="text" placeholder="Satuan Barang" name="sb" required>
+                                                            <datalist id="sb">
+                                                                <?php
+                                                                    while($row = mysqli_fetch_assoc($res_satuan_barang)){
+                                                                        ?>
+                                                                            <option value="<?=ucwords($row['satuan'])?>">
+                                                                        <?php
+                                                                    }
+                                                                ?>
+                                                            </datalist>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
@@ -138,7 +178,7 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>

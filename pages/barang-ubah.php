@@ -7,17 +7,31 @@
     require '../conf/init.php' ;
     cek();
 
+    $sql_satuan_barang = 'SELECT * FROM satuan_barang';
+    $res_satuan_barang = query($sql_satuan_barang);
+
     if (isset($_POST['simpan'])){
         $proid = $_GET['i'];
         $pronama = $_POST['pronama'] ;
         $proharga = $_POST['proharga'] ;
         $projumlah = $_POST['projumlah'] ;
+        $prosupplier = $_POST['prosupplier'] ;
         $protanggal = date("Y-m-d H:i:s") ;
+        $prosatuan = $_POST['sb'] ;
+
+        // Cek Satuan Barang
+        $sql_satuan_barang = "SELECT * FROM satuan_barang WHERE satuan=LOWER('$prosatuan')";
+
+        if (total($sql_satuan_barang) == 0) {
+            $sql_satuan_barang = "INSERT INTO satuan_barang VALUES (LOWER('$prosatuan'))";
+            query($sql_satuan_barang);
+        }
+        // End Cek Satuan Barang
 
         if (empty($pronama) || empty($proharga) || empty($projumlah)){
             echo 'Harap masukkan data dengan benar' ;
         } else {
-            $sql = "update produk set pronama='$pronama',proharga=$proharga,projumlah=$projumlah, protanggal=$protanggal where proid='$proid'" ;
+            $sql = "update produk set pronama='$pronama',proharga=$proharga,projumlah=$projumlah, protanggal='$protanggal',prosupplier='$prosupplier',prosatuan='$prosatuan' where proid='$proid'" ;
             echo $sql ;
             if (query($sql)){
                 header("Location: {$base_url}pages/barang.php");
@@ -115,7 +129,7 @@
                                 <div class="col">
                                     <div class="card shadow mb-3">
                                         <div class="card-body">
-                                            <form method="POST">
+                                            <form method="POST" autocomplete="on">
                                                 <div class="form-row">
                                                     <div class="col">
                                                         <div class="form-group"><label for="email"><strong>Nama Produk</strong></label><input class="form-control" type="text" placeholder="Nama Produk" value="<?= $row['pronama'] ;?>" name="pronama"></div>
@@ -128,7 +142,28 @@
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="col">
+                                                        <div class="form-group"><label for="sb"><strong>Satuan Barang</strong></label>
+                                                            <input list="sb" class="form-control" type="text" placeholder="Satuan Barang" value="<?= $row['prosatuan'] ;?>" name="sb" required>
+                                                            <datalist id="sb">
+                                                                <?php
+                                                                    while($rowSb = mysqli_fetch_assoc($res_satuan_barang)){
+                                                                        ?>
+                                                                            <option value="<?=ucwords($rowSb['satuan'])?>">
+                                                                        <?php
+                                                                    }
+                                                                ?>
+                                                            </datalist>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col">
                                                         <div class="form-group"><label for="last_name"><strong>Stok</strong></label><input class="form-control" type="number" placeholder="Sisa Stok" value="<?= $row['projumlah'] ;?>" name="projumlah"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col">
+                                                        <div class="form-group"><label for="email"><strong>Nama Supplier</strong></label><input class="form-control" type="text" placeholder="Nama Supplier" value="<?= $row['prosupplier'] ;?>" name="prosupplier" required></div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group"><input class="btn btn-primary btn-sm" type="submit" name="simpan" style="margin-top: 10px;background-color: #1cc88a;" value="Simpan" /></div>
@@ -143,7 +178,7 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>

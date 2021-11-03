@@ -22,15 +22,14 @@ SET time_zone = "+00:00";
 -- Database: `db_toko`
 --
 
-DELIMITER$$
+DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sto_tambahProduk` (`proid` varchar(40),`pronama` VARCHAR(200), `proharga` FLOAT, `projumlah` BIGINT, `protanggal` DATETIME, `prosupplier` VARCHAR(200))  BEGIN
-	insert into produk (proid,pronama,proharga,projumlah,protanggal,prosupplier) values (proid,pronama,proharga,projumlah,protanggal,prosupplier);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sto_tambahProduk` (`proid` varchar(40),`pronama` VARCHAR(200), `proharga` FLOAT, `projumlah` BIGINT, `protanggal` DATETIME, `prosatuan` VARCHAR(200), `prosupplier` VARCHAR(200))  BEGIN
+	insert into produk (proid,pronama,proharga,projumlah,protanggal,prosatuan,prosupplier) values (proid,pronama,proharga,projumlah,protanggal,prosatuan,prosupplier);
     END $$
-
-DELIMITER ;
+DELIMITER ;;
 
 -- drop procedure `sto_tambahProduk`;
 -- CALL sto_tambahProduk('ff',120,120,'2021-10-22 20:23:51','dsd');
@@ -46,17 +45,19 @@ CREATE TABLE `produk` (
   `projumlah` bigint(20) DEFAULT NULL,
   `proharga` float DEFAULT NULL,
   `protanggal` datetime DEFAULT NULL,
+  `prosatuan` varchar(200) NOT NULL,
   `prosupplier` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- drop table `produk`;
 --
 -- Dumping data for table `produk`
 --
 
-INSERT INTO `produk` (`proid`, `pronama`, `projumlah`, `proharga`, `protanggal`, `prosupplier`) VALUES
-(2, 'Keyboard Logitech', 6, 100000, '2021-10-22 12:20:01', 'logitech'),
-(3, 'Layar', 2, 500000, '2021-10-23 12:20:02', 'sinarmas'),
-(4, 'Mouse Baru', 10, 100000, '2021-10-24 12:20:03', 'rexus');
+INSERT INTO `produk` (`proid`, `pronama`, `projumlah`, `proharga`, `protanggal`, `prosatuan`, `prosupplier`) VALUES
+(2, 'Keyboard Logitech', 6, 100000, '2021-10-22 12:20:01', 'Unit', 'logitech'),
+(3, 'Layar', 2, 500000, '2021-10-23 12:20:02', 'Unit','sinarmas'),
+(4, 'Mouse Baru', 10, 100000, '2021-10-24 12:20:03', 'Unit','rexus');
 
 -- --------------------------------------------------------
 
@@ -108,9 +109,8 @@ INSERT INTO `transaksi_detail` (`tdid`, `trafaktur`, `proid`, `tdjumlah`, `tdhar
 DELIMITER $$
 CREATE TRIGGER `tg_order` AFTER INSERT ON `transaksi_detail` FOR EACH ROW BEGIN
 	update produk set projumlah=projumlah-new.tdjumlah where proid=new.proid;
-    END
-$$
-DELIMITER ;
+    END $$
+DELIMITER ;;
 
 -- --------------------------------------------------------
 
@@ -132,7 +132,20 @@ INSERT INTO `user` (`userid`, `username`, `userpass`) VALUES
 (1, 'admin', 'admin'),
 (2, 'a', 'a');
 
--- --------------------------------------------------------
+
+CREATE TABLE `satuan_barang` (
+  `satuan` varchar(200) NOT NULL
+);
+
+INSERT INTO `satuan_barang` (`satuan`) VALUES
+('unit'),
+('lembar'),
+('batang'),
+('kaleng'),
+('kardus'),
+('renteng'),
+('pack'),
+('ball');-- --------------------------------------------------------
 --
 -- Indexes for dumped tables
 --
@@ -212,3 +225,4 @@ select sum(tratotal) from transaksi t where month (tratanggal) = 10 and year(tra
 TRUNCATE TABLE produk;
 TRUNCATE TABLE transaksi;
 TRUNCATE TABLE transaksi_detail;
+

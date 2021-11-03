@@ -52,11 +52,13 @@ document.addEventListener("DOMContentLoaded", function () {
         el.addEventListener('keyup', function (e) {
             let total = 0;
             elmInputBarang.forEach(function (_, i) {
-                let hargabarang = elmHargaBarang[i].textContent.replace(',', '')
+                let hargabarang = elmHargaBarang[i].textContent.replaceAll(',', '')
                 total += hargabarang * elmInputBarang[i].value
+                console.log(hargabarang)
 
             })
             elmGrandTotal.innerText = numberWithCommas(total) + '.00'
+            console.log(numberWithCommas(total) + '.00')
 
         })
     })
@@ -68,6 +70,19 @@ document.addEventListener("DOMContentLoaded", function () {
             elm.textContent = elm.textContent.substr(0, 8) + '...'
         }
     })
+
+    // Submit Form in laporan-keluar.php
+    let elmSort = document.querySelectorAll('.sort')
+    let elmSortInput = document.querySelector('.sort-input')
+
+    elmSort.forEach(function (elm) {
+        elm.addEventListener("click", function (e) {
+            elmSortInput.value = elm.getAttribute('sort')        
+            document.forms[0].submit()
+        })
+    })
+
+
 
     // Cookie Nama pelanggan penjualan
     let elmInputNamePelanggan = document.querySelector(".nama-pelanggan")

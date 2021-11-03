@@ -42,8 +42,20 @@
     }
 
     function getFaktur($signature){
-        $no = $signature.md5(uniqid(rand(), true));
+        $no = $signature.bin2hex(random_bytes(2));
+
+        if ($signature == "TDID") {
+            $no = $signature.bin2hex(random_bytes(4));
+        }
+
         return $no ;
+    }
+
+    function  getTransFaktur($signature){
+        $uid = bin2hex(random_bytes(2));
+
+        $noId = $signature.date("Ymd").$uid;
+        return $noId ;
     }
 
     function cek(){

@@ -6,40 +6,33 @@
     require '../conf/init.php' ;
     cek();
 
-    $cari = "" ;
-    $startDate = "";
-    $endDate = date("Y-m-d");
-    $sort = "";
-    
-    // Get Query Cari
-    if (isset($_GET['c'])) {
-        $cari = $_GET['c'];
+    $trafaktur = "" ;
+    if (isset($_GET['transid'])){
+        $trafaktur = $_GET['transid'];
     }
 
-    // Get Query limit date
-    if (isset($_GET['startDate'], $_GET['endDate']) && $_GET['endDate'] != '') {
-        $startDate = $_GET['startDate'];
-        $endDate = $_GET['endDate'];
-    } else {
-        $endDate = date("Y-m-d");
-    }
+    $sql = "SELECT td.tdid, t.trafaktur, t.trapelanggan, t.tratanggal, p.pronama, td.tdjumlah, p.proharga, u.username
+            FROM transaksi_detail td
+            INNER JOIN transaksi t
+            ON td.trafaktur = t.trafaktur
+            INNER JOIN produk p
+            ON td.proid = p.proid
+            INNER JOIN user u
+            ON t.userid = u.userid
+            WHERE td.trafaktur = '$trafaktur'";
 
-    // Get Sort
-    if (isset($_GET['sort'])) {
-        $sort = $_GET['sort'];
-    }
+    $sqlTotal = "SELECT t.tratotal AS jumharga, SUM(td.tdjumlah) jumbarang
+                    FROM transaksi t
+                    INNER JOIN transaksi_detail td
+                    ON td.trafaktur = t.trafaktur
+                    WHERE td.trafaktur = '$trafaktur'
+                    GROUP BY td.trafaktur";
 
-    $sql = "SELECT trafaktur, trapelanggan, tratanggal, tratotal, (SELECT sum(tdjumlah) FROM transaksi_detail WHERE trafaktur=t.trafaktur ) AS jumbarang, username
-            FROM transaksi t 
-            INNER JOIN user u ON u.userid = t.userid
-            WHERE (trafaktur LIKE '%$cari%' OR
-            trapelanggan LIKE '%$cari%') AND
-            tratanggal BETWEEN '$startDate' AND '$endDate'
-            ORDER BY tratotal $sort";
-    
     $res = query($sql) ;
     $count = total($sql);
 
+    $resTotal = query($sqlTotal) ;
+    $rowTotal = mysqli_fetch_assoc($resTotal);
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +92,7 @@
                     <li class="nav-item" role="presentation"><a class="nav-link" href="about.php"><i class="icon-info" style="font-size: 20px;"></i><span style="font-size: 18px;margin-left: 10px;">Tentang Saya</span></a></li>
                     <li class="nav-item" role="presentation"></li>
                 </ul>
-                <div class="text-center d-none d-md-inline">
+                                <div class="text-center d-none d-md-inline">
                     <div class="row">
                         <div class="col"><a href="logout.php" class="btn btn-primary" style="background-color: #e74a3b;"><i class="icon-logout" style="margin-right: 10px;font-size: 18px;"></i>Logout</a></div>
                     </div>
@@ -110,66 +103,27 @@
             <div id="content">
                 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top"></nav>
                 <div class="container-fluid">
-                    <h3 class="text-dark mb-4">Data Penjualan</h3>
+                    <h3 class="text-dark mb-4">Detail Data Penjualan</h3>
                     <div class="card shadow">
-                        <form class="card-body">
+                        <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3 text-nowrap">
+                                <div class="col-md-8 text-nowrap">
                                     <a class="btn btn-success" href="../utils/export-laporan-keluar-barang.php">Export Excel</a>
-                                    <a href="./laporan-keluar.php" class="btn btn-primary" title="Refresh">
-                                        <i class="fas fa-redo-alt"></i>
-                                    </a>
-                                </div>
-                                <div class="col-md-6 text-nowrap">
-                                    <div class="form-row">
-                                        <span class="align-self-center">From</span>
-                                        <div class="col-sm-5">
-                                            <input type="date" class="form-control datefield" placeholder="Date" name="startDate">
-                                        </div>
-                                        <span class="align-self-center">To</span>
-                                        <div class="col-sm-5">
-                                            <input type="date" class="form-control datefield" placeholder="To" name="endDate" value="<?= $endDate ?>">
-                                        </div>
-                                        <button class="btn btn-dark" type="submit" title="Filter"><i class="fas fa-filter"></i></button>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 text-md-right">
-                                    <label class="sr-only" for="inlineFormInputGroupUsername">Cari Barang</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text"><i class="fas fa-box-open"></i></div>
-                                        </div>
-                                        <input type="search" id="inlineFormInputGroupUsername" class="form-control form-control" value="<?= $cari?>" placeholder="Cari Pelanggan & Transaksi" name="c">
-                                    </div>
                                 </div>
                             </div>
                             <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
                                 <table class="table my-0" id="dataTable">
                                     <thead>
                                         <tr>
-                                            <th scope="col">No</th>
-                                            <th scope="col">No. Faktur</th>
-                                            <th scope="col">Pelanggan</th>
-                                            <th scope="col">Tanggal</th>
-                                            <th scope="col">Jum. Barang</th>
-                                            <th scope="col">
-                                                <div class="row">
-                                                    <div class="col align-self-center">
-                                                        Jum. Bayar
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><i class="fas fa-sort text-gray-400"></i></button>
-                                                            <div class="dropdown-menu shadow dropdown-menu-right animated--fade-in" role="menu">
-                                                                <p class="text-center dropdown-header">Sortt By:</p>
-                                                                <div class="dropdown-item sort" role="presentation" sort="DESC" style="cursor: pointer;"><i class="fas fa-sort-alpha-up-alt"></i>&nbsp; Descending</div>
-                                                                <div class="dropdown-item sort" role="presentation" sort="ASC" style="cursor: pointer;"><i class="fas fa-sort-alpha-down"></i>&nbsp; Ascending</div>
-                                                                <input type="hidden" class="sort-input" name="sort">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <th scope="col">Operator</th>
+                                            <th>No</th>
+                                            <th>ID</th>
+                                            <th>No. Faktur</th>
+                                            <th>Pelanggan</th>
+                                            <th>Tanggal</th>
+                                            <th>Produk</th>
+                                            <th>Jum. Barang</th>
+                                            <th>Harga</th>
+                                            <th>Operator</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -180,17 +134,30 @@
                                             ?>
                                                 <tr>
                                                     <td><?= $no ?></td>
-                                                    <td><a href="./laporan-detail-keluar.php?transid=<?= $row['trafaktur'] ;?>" title="Detail Transaksi"><?= $row['trafaktur'] ;?></a></td>
+                                                    <td><?= $row['tdid'] ;?></td>
+                                                    <td><?= $row['trafaktur'] ;?></td>
                                                     <td><?= $row['trapelanggan'] ;?></td>
                                                     <td><?= $row['tratanggal'] ;?></td>
-                                                    <td><?= $row['jumbarang'] ;?></td>
-                                                    <td><?= number_format($row['tratotal'],2) ;?></td>
+                                                    <td><?= $row['pronama'] ;?></td>
+                                                    <td><?= $row['tdjumlah'] ;?></td>
+                                                    <td><?= number_format($row['proharga'],2) ;?></td>
                                                     <td><?= $row['username'] ;?></td>
                                                 </tr>
                                             <?php
                                             $no += 1 ;
                                         }
                                         ?>
+                                        <tr>
+                                            <td></td>
+                                            <th>Total</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><?= $rowTotal['jumbarang']; ?></td>
+                                            <td><?= number_format($rowTotal['jumharga'],2); ?></td>
+                                            <td></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -204,7 +171,7 @@
                                     </nav>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

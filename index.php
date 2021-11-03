@@ -79,7 +79,7 @@
                 </ul>
                 <div class="text-center d-none d-md-inline">
                     <div class="row">
-                        <div class="col"><a href="logout.php" class="btn btn-primary" style="background-color: #e74a3b;"><i class="icon-logout" style="margin-right: 10px;font-size: 18px;"></i>Logout</a></div>
+                        <div class="col"><a href="./pages/logout.php" class="btn btn-primary" style="background-color: #e74a3b;"><i class="icon-logout" style="margin-right: 10px;font-size: 18px;"></i>Logout</a></div>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                                             <a class="dropdown-item Minggu" role="presentation" href="#">&nbsp;Mingguan</a>
                                             <a class="dropdown-item Bulan" role="presentation" href="#">&nbsp;Bulanan</a>
                                             <a class="dropdown-item Tahun" role="presentation" href="#">&nbsp;Tahunan</a>
-                                            <div class="dropdown-divider"></div><a class="dropdown-item" role="presentation" href="#">&nbsp;Something else here</a></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-body" style="width: auto;">
@@ -156,7 +156,7 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>

@@ -20,7 +20,12 @@
                 $_SESSION['user'] = mysqli_fetch_assoc($res);
                 header("Location: {$base_url}");
             } else {
-                $msg = 'Login Gagal. Pastikan Username dan password benar!' ;
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                echo '<strong>Login Gagal</strong> Masukkan username dan password dengan bernar';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             }
         }
     }
@@ -60,7 +65,7 @@
                                     <form class="user" method="POST">
                                         <div class="form-group"><input class="form-control form-control-user" type="text" id="exampleInputEmail" placeholder="Username" name="username"></div>
                                         <div class="form-group"><input class="form-control form-control-user" type="password" id="exampleInputPassword" placeholder="Password" name="userpass"></div>
-                                        <input class="btn btn-primary btn-block text-white btn-user" type="submit" name="simpan" />
+                                        <input class="btn btn-primary btn-block text-white btn-user" type="submit" name="simpan" value="Login"/>
                                         <hr>
                                     </form>
                                 </div>

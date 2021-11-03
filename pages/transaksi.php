@@ -12,7 +12,7 @@
 
     if (isset($_POST['simpan'])){
         $cart = $_SESSION['cart'] ;
-        $trafaktur = getFaktur("TRANS") ;
+        $trafaktur = getTransFaktur("TRANS") ;
         $user = $_SESSION['user'] ;
         $userid= $user['userid'] ;
         $err = 0 ;
@@ -46,10 +46,20 @@
             if (query($sql) && $err == 0){
                 commit();
                 unset($_SESSION['cart']);
-                $msg = 'Penjualan Berhasil disimpan' ;
+                echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Berhasil</strong> Barang sudah terproses';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             } else {
                 rollback();
-                $msg = 'GAGAL' ;
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Gagal</strong> Terjadi kesalahan penjualan barang';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             }
         }
     }
@@ -136,7 +146,7 @@
                                         <div class="form-group"><label for="address"><strong>Nama Pelanggan</strong><br></label><input class="form-control nama-pelanggan" type="text" placeholder="Nama Pelanggan" value="<?= $trapelanggan ?>" name="trapelanggan" required></div>
                                         <div class="form-row">
                                             <div class="col">
-                                                <div class="form-group"><label for="city"><strong>No Faktur</strong></label><input class="form-control" type="text" name="trafaktur" disabled value=<?= getFaktur("TRANS") ?>></div>
+                                                <div class="form-group"><label for="city"><strong>No Faktur</strong></label><input class="form-control no-faktur" type="text" name="trafaktur" disabled value=<?= getTransFaktur("TRANS") ; ?>></div>
                                             </div>
                                             <div class="col">
                                                 <div class="form-group"><label for="country"><strong>Tanggal</strong></label><input class="form-control" type="text" disabled value=<?= $tanggal ?>></div>
@@ -157,6 +167,7 @@
                                                     <tr>
                                                         <th>Produk</th>
                                                         <th>Jumlah</th>
+                                                        <th>Satuan</th>
                                                         <th>Harga</th>
                                                         <th>Aksi</th>
                                                     </tr>
@@ -180,6 +191,7 @@
                                                                     <td>
                                                                         <input class="jml-barang" type="number" value="<?= (int)$val['jumlah'] ?>" min="0" max="<?= (int)$val['projumlah'] ?>" name="jmlBarang[]">
                                                                     </td>
+                                                                    <td><?= $val['prosatuan'] ?></td>
                                                                     <td class="harga-barang"><?= number_format($val['proharga'],2) ?></td>
                                                                     <td><a href="transaksi-hapus.php?p=<?= $val['proid']?>" class="btn btn-primary" style="background-color: #e74a3b;">Hapus</a></td>
                                                                 </tr>
@@ -193,6 +205,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td>Jumlah Pembelanjaan :</td>
+                                                        <td></td>
                                                         <td></td>
                                                         <td class="grand-total"><?= number_format($total,2) ?></td>
                                                     </tr>
@@ -212,7 +225,7 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>

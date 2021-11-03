@@ -87,15 +87,20 @@
                     <div class="card shadow">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-9 text-nowrap">
-                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"></div><a href="barang-tambah.php" class="btn btn-primary" type="button" style="background-color: #1cc88a;">Tambah Barang</a>
+                                <div class="col-md-8 text-nowrap">
+                                    <a href="barang-tambah.php" class="btn btn-primary" type="button" style="background-color: #1cc88a;">Tambah Barang</a>
+                                </div>
+                                <div class="col-md-1 text-nowrap">
+                                    <a href="./barang.php" class="btn btn-primary">
+                                        <i class="fas fa-redo-alt"></i>
+                                    </a>
                                 </div>
                                 <div class="col-md-3 text-md-right">
                                     <form>
                                         <label class="sr-only" for="inlineFormInputGroupUsername">Cari Barang</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                            <div class="input-group-text"><i class="fas fa-box-open"></i></div>
+                                                <div class="input-group-text"><i class="fas fa-box-open"></i></div>
                                             </div>
                                             <input type="search" id="inlineFormInputGroupUsername" class="form-control form-control-sm" value="<?= $cari?>" placeholder="Cari Barang" name="c">
                                         </div>
@@ -108,6 +113,7 @@
                                         <tr>
                                             <th>Nama Barang</th>
                                             <th>Sisa Stok</th>
+                                            <th>Satuan</th>
                                             <th>Harga</th>
                                             <th>Tanggal</th>
                                             <th>Supplier</th>
@@ -124,6 +130,7 @@
                                                 <tr>
                                                     <td><?= $row['pronama'] ?></td>
                                                     <td><?= $row['projumlah'] ?></td>
+                                                    <td><?= ucwords($row['prosatuan']) ?></td>
                                                     <td><?= number_format($row['proharga'],2) ?></td>
                                                     <td><?= $row['protanggal'] ?></td>
                                                     <td><?= $row['prosupplier'] ?></td>
@@ -153,7 +160,7 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Consonant 2021</span></div>
+                    <div class="text-center my-auto copyright"><span>Berkah Berdikari Warehouse</span></div>
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a></div>
