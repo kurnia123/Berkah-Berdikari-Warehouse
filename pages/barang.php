@@ -89,20 +89,18 @@
                             <div class="row">
                                 <div class="col-md-8 text-nowrap">
                                     <a href="barang-tambah.php" class="btn btn-primary" type="button" style="background-color: #1cc88a;">Tambah Barang</a>
-                                </div>
-                                <div class="col-md-1 text-nowrap">
                                     <a href="./barang.php" class="btn btn-primary">
                                         <i class="fas fa-redo-alt"></i>
                                     </a>
                                 </div>
-                                <div class="col-md-3 text-md-right">
+                                <div class="col-md-4 text-md-right">
                                     <form>
                                         <label class="sr-only" for="inlineFormInputGroupUsername">Cari Barang</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-box-open"></i></div>
                                             </div>
-                                            <input type="search" id="inlineFormInputGroupUsername" class="form-control form-control-sm" value="<?= $cari?>" placeholder="Cari Barang" name="c">
+                                            <input type="search" id="inlineFormInputGroupUsername" class="form-control" value="<?= $cari?>" placeholder="Cari Barang" name="c">
                                         </div>
                                     </form>
                                 </div>

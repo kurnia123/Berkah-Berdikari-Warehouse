@@ -32,11 +32,20 @@
             echo 'Harap masukkan data dengan benar' ;
         } else {
             $sql = "update produk set pronama='$pronama',proharga=$proharga,projumlah=$projumlah, protanggal='$protanggal',prosupplier='$prosupplier',prosatuan='$prosatuan' where proid='$proid'" ;
-            echo $sql ;
             if (query($sql)){
-                header("Location: {$base_url}pages/barang.php");
+                echo '<div class="alert alert-success alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Berhasil</strong> Barang berhasil diupdate';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             } else {
-                echo 'Gagal Mengubah Data ! Harap masukkan data dengan benar' ;
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                echo '<strong>Transaksi Gagal</strong> Terjadi kesalahan update barang';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                echo '<span aria-hidden="true">&times;</span>';
+                echo '</button>';
+                echo '</div>';
             }
         }
     }
@@ -83,7 +92,6 @@
                     <li class="nav-item" role="presentation"><a class="nav-link" href="barang.php"><i class="icon-layers" style="font-size: 20px;"></i><span style="margin-left: 10px;font-size: 18px;">Data Barang</span></a></li>
                     <li class="nav-item accordion-item">
                         <a class="nav-link accordion-header" type="button" id="headingTransaksi" data-bs-toggle="collapse" data-bs-target="#collapseTransaksi" aria-expanded="true" aria-controls="collapseTransaksi">
-                            
                             <i class="fas fa-money-bill-wave" style="font-size: 20px;"></i>
                             <span class="accordion-button" style="margin-left: 4px;font-size: 18px;">
                                 Transaksi
